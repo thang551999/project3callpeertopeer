@@ -5,9 +5,9 @@
         <h2>Welcome to WebRTC Video Demo</h2>
         <br />
         <form class="form" action @submit.prevent="submit()">
-          <input class="form-control" type="text" v-model="room_name" placeholder="请输入房间名" />
+          <input class="form-control" type="text" v-model="room_name" placeholder="Vui Lòng Nhập Tên Phòng" />
           <br />
-          <button class="btn btn-primary btn-block" type="submit">创建房间</button>
+          <button class="btn btn-primary btn-block" type="submit">Tạo Phòng</button>
         </form>
       </div>
     </div>
@@ -18,8 +18,8 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th style="text-align: center">房间号</th>
-              <th style="text-align: center">用户</th>
+              <th style="text-align: center">Số Phòng</th>
+              <th style="text-align: center">Người DÙng</th>
             </tr>
           </thead>
           <tbody>
@@ -59,7 +59,7 @@ export default {
   mounted() {
     socket.on(
       'message',
-      function(data) {
+      function (data) {
         const parseData = JSON.parse(data);
         switch (parseData.event) {
           case 'show':
@@ -79,5 +79,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

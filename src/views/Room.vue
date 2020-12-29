@@ -4,18 +4,18 @@
       <div class="row">
         <div class="col-md-4 col-md-offset-4">
           <form class="form" action @submit.prevent="submit()">
-            <h2>WebRTC Video Demo. Please Sign In</h2>
+            <h2>WebRTC Demmo Project3 Mời Bạn Đăng Nhập</span></h2>
             <br />
             <input
               class="form-control"
               type="text"
-              placeholder="请输入您的昵称"
+              placeholder="Tên Đăng Nhập"
               required
               autofocus
               v-model="user_name"
             />
             <br />
-            <button class="btn btn-primary btn-block" type="submit">创建昵称</button>
+            <button class="btn btn-primary btn-block" type="submit">Đăng Nhập</button>
           </form>
         </div>
       </div>
@@ -24,34 +24,44 @@
       <div class="row">
         <div class="col-md-3" style="height: 50%">
           <ul class="list-group">
-            <li class="list-group-item">昵称: {{ user_name }}</li>
-            <li class="list-group-item">当前在线人数: {{ Object.getOwnPropertyNames(users).length - 1 }}</li>
+            <li class="list-group-item">Tên đăng nhập: {{ user_name }}</li>
+            <li class="list-group-item">Số người đang online: {{ Object.getOwnPropertyNames(users).length - 1 }}</li>
             <li class="list-group-item">
-              在线用户:
+              Người dùng:
               <div v-for="(user, index) in users" :key="index">
                 <br />
                 <span>{{ index }}</span>
-                <span :class="[user ? 'green_color' : 'red_color']">{{ user ? '(在线)' : '(正在通话)' }}</span>
+                <span :class="[user ? 'green_color' : 'red_color']">{{
+                  user ? '(Trực tuyến)' : '(Đang có cuộc gọi))'
+                }}</span>
               </div>
             </li>
           </ul>
+
           <div class="row text-center">
             <div class="col-md-12">
-              <input
-                class="form-control"
-                type="text"
-                v-model="call_username"
-                placeholder="username to call"
-              />
+              <input class="form-control" type="text" v-model="call_username" placeholder="username to call" />
               <br />
               <button class="btn-success btn" :disabled="!users[user_name]" @click="call">Call</button>
               <button class="btn-danger btn" :disabled="users[user_name]" @click="hangUp">Hang Up</button>
             </div>
           </div>
+          <button
+            onclick="window.location.href='http://18.216.47.0:5000/?room=thangdp_412418611'"
+            class="btn-success btn"
+            style="margin: 30px"
+          >
+            Gọi Nhóm
+          </button>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9" style="flex-direction: row">
           <video id="localVideo" autoplay></video>
-          <video id="remoteVideo" :src="remote_video" autoplay></video>
+          <video
+            id="remoteVideo"
+            src=""
+            autoplay="autoplay"
+            style="/*! height: 100-x; */ height: 100px; width: 100px"
+          ></video>
         </div>
       </div>
     </div>
@@ -59,9 +69,9 @@
       <div class="preview-wrapper">
         <div class="preview-container">
           <div class="preview-body">
-            <h4>您有视频邀请，是否接受?</h4>
-            <button class="btn-success btn" @click="accept">接受</button>
-            <button class="btn-danger btn" style="margin-right: 70px" @click="reject">拒绝</button>
+            <h4>Bạn có cuộc gọi video Bạn chấp nhận không?</h4>
+            <button class="btn-success btn" @click="accept">Đồng Ý</button>
+            <button class="btn-danger btn" style="margin-right: 70px" @click="reject">Từ Chối</button>
           </div>
           <div class="confirm" @click="closePreview">×</div>
         </div>
@@ -101,7 +111,7 @@ export default {
   mounted() {
     socket.on(
       'message',
-      function(data) {
+      function (data) {
         console.log(data);
         switch (data.event) {
           case 'show':
@@ -154,7 +164,7 @@ export default {
     },
     handleLogin(data) {
       if (data.success === false) {
-        alert('Ooops...please try a different username');
+        alert('Tên đã trùng mời chọn trên khác');
       } else {
         this.show = false;
         this.users = data.allUsers;
@@ -167,7 +177,6 @@ export default {
       if ('srcObject' in video) {
         video.srcObject = stream;
       } else {
-        // 防止在新的浏览器里使用它，应为它已经不再支持了
         video.src = window.URL.createObjectURL(stream);
       }
     },
@@ -175,13 +184,13 @@ export default {
       const self = this;
       navigator.mediaDevices
         .getUserMedia({ audio: true, video: true })
-        .then(function(stream) {
+        .then(function (stream) {
           var video = document.getElementById('localVideo');
           self.addVideoURL('localVideo', stream);
           video.muted = true;
           localStream = stream;
         })
-        .catch(function(err) {
+        .catch(function (err) {
           console.log(err.name + ': ' + err.message);
         });
     },
@@ -194,19 +203,19 @@ export default {
             event: 'call',
           });
         } else {
-          alert('The current user is calling, try another');
+          alert('Người dùng bận');
         }
       } else {
-        alert('Ooops...this username cannot be empty, please try again');
+        alert('Vui lòng thử lại');
       }
     },
     createConnection() {
       peerConn = new RTCPeerConnection(configuration);
       peerConn.addStream(localStream);
-      peerConn.onaddstream = e => {
+      peerConn.onaddstream = (e) => {
         this.addVideoURL('remoteVideo', e.stream);
       };
-      peerConn.onicecandidate = event => {
+      peerConn.onicecandidate = (event) => {
         setTimeout(() => {
           if (event.candidate) {
             this.send({
@@ -239,14 +248,14 @@ export default {
       if (data.accept) {
         // Create an offer
         peerConn.createOffer(
-          offer => {
+          (offer) => {
             this.send({
               event: 'offer',
               offer: offer,
             });
             peerConn.setLocalDescription(offer);
           },
-          error => {
+          (error) => {
             alert('Error when creating an offer');
           }
         );
@@ -260,14 +269,14 @@ export default {
       peerConn.setRemoteDescription(new RTCSessionDescription(data.offer));
       // Create an answer to an offer
       peerConn.createAnswer(
-        answer => {
+        (answer) => {
           peerConn.setLocalDescription(answer);
           this.send({
             event: 'answer',
             answer: answer,
           });
         },
-        error => {
+        (error) => {
           alert('Error when creating an answer');
         }
       );
@@ -279,7 +288,6 @@ export default {
       peerConn.setRemoteDescription(new RTCSessionDescription(data.answer));
     },
     handleCandidate(data) {
-      // ClientB 通过 PeerConnection 的 AddIceCandidate 方法保存起来
       peerConn.addIceCandidate(new RTCIceCandidate(data.candidate));
     },
     hangUp() {
@@ -289,7 +297,7 @@ export default {
       this.handleLeave();
     },
     handleLeave() {
-      alert('通话已结束');
+      alert('Cuộc gọi kết thúc');
       connectedUser = null;
       this.remote_video = '';
       peerConn.close();
